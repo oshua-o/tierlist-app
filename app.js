@@ -152,13 +152,65 @@ captureBackdrop.addEventListener('click', e => { if (e.target === captureBackdro
 document.getElementById('btnCamera').addEventListener('click', () => { camInput.value = ''; camInput.click(); });
 document.getElementById('btnLibrary').addEventListener('click', () => { libInput.value = ''; libInput.click(); });
 
+/* ---------- Fotos vor dem Speichern verkleinern (max. 800px, WebP) ---------- */
+let webpSupportChecked = null;
+function supportsWebpEncoding() {
+  if (webpSupportChecked !== null) return Promise.resolve(webpSupportChecked);
+  return new Promise(resolve => {
+    const c = document.createElement('canvas');
+    c.width = 1; c.height = 1;
+    c.toBlob(blob => {
+      webpSupportChecked = !!(blob && blob.type === 'image/webp');
+      resolve(webpSupportChecked);
+    }, 'image/webp');
+  });
+}
+
+function resizeImage(file, maxWidth, mimeType, quality) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const scale = Math.min(1, maxWidth / img.naturalWidth);
+      const w = Math.round(img.naturalWidth * scale);
+      const h = Math.round(img.naturalHeight * scale);
+
+      const canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+
+      canvas.toBlob(blob => {
+        if (blob) resolve(blob);
+        else reject(new Error('Konnte Bild nicht verkleinern'));
+      }, mimeType, quality);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Bild konnte nicht geladen werden')); };
+    img.src = url;
+  });
+}
+
+async function prepareForStorage(file) {
+  const webp = await supportsWebpEncoding();
+  const mimeType = webp ? 'image/webp' : 'image/jpeg';
+  try {
+    return await resizeImage(file, 800, mimeType, 0.82);
+  } catch (e) {
+    console.warn('Verkleinern fehlgeschlagen, speichere Original:', e);
+    return file; // Fallback: lieber das Originalfoto als gar keins
+  }
+}
+
 async function handleFile(file) {
   if (!file || !activeSpecies) return;
   const sp = activeSpecies;
-  const record = { name: sp.n, blob: file, date: Date.now() };
+  showToast('Foto wird verkleinert…');
+  const resized = await prepareForStorage(file);
+  const record = { name: sp.n, blob: resized, date: Date.now() };
   await dbPut(record);
-  const objectUrl = URL.createObjectURL(file);
-  photos[sp.n] = { blob: file, date: record.date, objectUrl };
+  const objectUrl = URL.createObjectURL(resized);
+  photos[sp.n] = { blob: resized, date: record.date, objectUrl };
   closeCapture();
   showToast(`${sp.n} hinzugefügt`);
   render();
