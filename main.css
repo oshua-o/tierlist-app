@@ -1,0 +1,50 @@
+/* GLOBAL / BASIC */
+html,
+body {
+  height: 100%;               /* für den Sticky‑Footer */
+  margin: 0;
+}
+
+/* Flex‑Container: Header → Content → Footer */
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+html {
+    font-family: 'Krub', Arial, Helvetica, sans-serif;
+}
+
+/* CONTENT  */
+#content {
+  position: static;
+  margin: 0 auto;               /* zentriert innerhalb des Flex‑Containers */
+  max-width: 520px;             /* Breite wie zuvor */
+  padding: 2rem 1rem;           /* Innenabstand, damit es nicht an den Rändern klebt */
+  text-align: left;
+  line-height: 1.35;
+  flex: 1 0 auto;               /* nimmt den verfügbaren Platz ein → Footer nach unten schieben */
+}
+
+/* GLOBAL LINK STYLE */
+a {
+  text-decoration: none;
+  color: #240d58;
+}
+
+a:hover {
+  color: #240d58;
+}
+
+/* RESPONSIVE FEINABSTIMMUNG */
+@media (max-width: 480px) {
+  nav.main-nav ul.menu {
+    flex-wrap: wrap;          /* Zeilenumbruch bei wenig Platz */
+    justify-content: center;
+  }
+
+  nav.main-nav ul.menu li a {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+  }
+}
