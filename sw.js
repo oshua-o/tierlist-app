@@ -1,6 +1,6 @@
 const CACHE = 'tierlist';
 const ASSETS = [
-  './index.html',
+  './tierlist-app.html',
   './app.js',
   './species.js',
   './manifest.json',

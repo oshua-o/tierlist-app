@@ -209,7 +209,7 @@ const filterBtn = document.getElementById('filterBtn');
 filterBtn.addEventListener('click', () => {
   showOnlyOpen = !showOnlyOpen;
   filterBtn.setAttribute('aria-pressed', String(showOnlyOpen));
-  filterBtn.textContent = showOnlyOpen ? 'alle' : 'noch nicht entdeckt';
+  filterBtn.textContent = showOnlyOpen ? 'alle' : 'noch nicht gefunden';
   render();
 });
 
