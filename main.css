@@ -61,7 +61,7 @@ nav.main-nav ul.menu li a:hover {
   position: static;
   margin: 0 auto;               /* zentriert innerhalb des Flex‑Containers */
   max-width: 520px;             /* Breite wie zuvor */
-  padding: 2rem 1rem;           /* Innenabstand, damit es nicht an den Rändern klebt */
+  padding: 1rem 0.5rem;           /* Innenabstand, damit es nicht an den Rändern klebt */
   text-align: center;
   line-height: 1;
   flex: 0 auto;               /* nimmt den verfügbaren Platz ein → Footer nach unten schieben */
@@ -70,7 +70,7 @@ nav.main-nav ul.menu li a:hover {
 /* Avatar‑Bild */
 .avatar {
   border-radius: 50%;
-  width: 150px;
+  width: 200px;
 }
 
 
