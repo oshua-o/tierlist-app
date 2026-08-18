@@ -216,6 +216,23 @@
   .readme-content p{ margin:0 0 .7rem; }
   .readme-content ul{ margin:0 0 .7rem; padding-left:1.2rem; }
   .readme-content li{ margin-bottom:.3rem; }
+
+  /* ---------- Fix: Avatar rund halten & Abstände in der Web-App korrigieren ---------- */
+  .avatar{
+    height: 150px;
+    object-fit: cover;
+    display: block;
+    margin: 0 auto;
+  }
+
+  #picture{
+    padding-top: calc(1.2rem + env(safe-area-inset-top));
+    padding-bottom: 0.4rem;
+  }
+
+  #content.feldbuch{
+    padding-top: 0.4rem;
+  }
 </style>
 </head>
 <body>
