@@ -198,6 +198,24 @@
     transition:background-color .2s ease;
   }
   .intro-close-btn:hover{ background:#240d58; }
+
+  /* ---------- Anleitung / README ---------- */
+  .readme-btn{
+    display:inline-flex; align-items:center; gap:.4rem;
+    font-family:inherit; font-size:.8rem; font-weight:bold;
+    color:#240d58; background:#fff; border:1px solid #240d58;
+    border-radius:.5rem; padding:.4rem .8rem; cursor:pointer;
+    margin-bottom:.6rem;
+    transition:background-color .2s ease, color .2s ease;
+  }
+  .readme-btn:hover{ background:#240d58; color:#fff; }
+
+  .readme-content{ font-size:.88rem; line-height:1.55; }
+  .readme-content h3{ font-size:1rem; margin:1rem 0 .3rem; }
+  .readme-content h3:first-child{ margin-top:0; }
+  .readme-content p{ margin:0 0 .7rem; }
+  .readme-content ul{ margin:0 0 .7rem; padding-left:1.2rem; }
+  .readme-content li{ margin-bottom:.3rem; }
 </style>
 </head>
 <body>
@@ -221,7 +239,11 @@
     </div>
 
     <p>
-      Es gibt in Deutschland 387 heimische Vögel, Säugetiere, Reptilien &amp; Amphibien. Hier kannst Du alle dokumentieren. Mal sehen, wann Du alle gefunden hast.</p>
+      Es gibt in Deutschland 387 heimische Vögel, Säugetiere, Reptilien &amp; Amphibien. Hier kannst Du alle dokumentieren. Mal sehen, wann Du alle gefunden hast.
+    </p>
+
+    <button class="readme-btn" id="readmeBtn">Anleitung</button>
+
     <p class="progress-stats">
       <span style="color:#240d58;">fotografiert: <strong id="statText">0 / 387</strong></span>
       <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
@@ -234,6 +256,37 @@
 
     <div class="grid" id="grid"></div>
   </section>
+
+  <div class="sheet-backdrop" id="readmeBackdrop">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <h1>Tierlist - Liste der Tiere in Deutschland</h1>
+      <div class="readme-content">
+        <p>Ja ich weiß, der Begriff "Tierlist" wird eigentlich nicht für Tiere verwendet. Aber ich konnte mir den Wortwitz nicht nehmen lassen.</p>
+        <h2>Anleitung</h2>
+        <p>Du darfst jede Änderung an dieser "App" vornehmen, die Du möchtest. Wenn Du meiner Variante folgen möchtest, machst Du das folgendermaßen:</p>
+        <h3>Die Seite selbst</h3>
+        <p>
+          Auf oshua-o.github.io/tierlist-app kommst Du auf die "App". Hier kannst Du Fotos direkt machen oder für die entsprechenden Tiere hochladen. Der Fortschritt wird Dir oben angezeigt. Du kannst auch Fotos wieder löschen und durch andere ersetzen. Als Datum wird Dir immer angezeigt, wann Du das Foto hochgeladen hast.<br>
+          Du speicherst alle Daten direkt in Deinem Browser-Cache. Das kann dazu führen, dass (wenn Du große Fotos hochlädst) der Cache sehr groß wird. <br>
+          Ich kann nicht garantieren, dass Updates Deines Browsers, Deines Betriebssystems etc. die Daten nicht wieder löschen. <br>
+          Keine Daten werden hochgeladen oder auf Servern gespeichert. Du hast die volle Kontrolle über Deine Fotos.
+        </p>
+        <h3>Web App einrichten</h3>
+        <p>
+          In Safari kannst Du die Seite als Web App speichern. Dafür gehst Du auf<br>
+          1) "Share"<br>
+          2) "Add to Home Screen"<br>
+          3) Dann kannst Du den Namen "Tierlist" beibehalten oder einen anderen Namen vergeben.<br>
+          4) Lasse "Open as Web App" angeschaltet.<br>
+          5) Klicke auf "Add".<br>
+          6) Jetzt ist die App auf Deinem Home Screen und Du kannst sie wie ein anderes App-Icon auch verschieben.<br><br>
+          In Andoid-Systemen geht das mit Sicherheit auch, allerdings konnte ich da noch nicht testen wie :(
+        </p>
+      </div>
+      <button class="cancel-btn" id="closeReadme">Schließen</button>
+    </div>
+  </div>
 
   <!-- Capture sheet -->
   <div class="sheet-backdrop" id="captureBackdrop">
@@ -296,6 +349,22 @@
     introClose.addEventListener('click', closeIntro);
     introBackdrop.addEventListener('click', e => {
       if (e.target === introBackdrop) closeIntro();
+    });
+  </script>
+
+  <script>
+    const readmeBackdrop = document.getElementById('readmeBackdrop');
+    const readmeBtn = document.getElementById('readmeBtn');
+    const closeReadme = document.getElementById('closeReadme');
+
+    readmeBtn.addEventListener('click', () => {
+      readmeBackdrop.classList.add('open');
+    });
+    closeReadme.addEventListener('click', () => {
+      readmeBackdrop.classList.remove('open');
+    });
+    readmeBackdrop.addEventListener('click', e => {
+      if (e.target === readmeBackdrop) readmeBackdrop.classList.remove('open');
     });
   </script>
 
