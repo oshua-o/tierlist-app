@@ -170,16 +170,58 @@
     z-index:60;
   }
   .toast.show{ opacity:1; transform:translate(-50%,0); }
+
+  /* ---------- Intro-Hinweis beim ersten Öffnen ---------- */
+  .intro-backdrop{
+    position:fixed; inset:0; background:rgba(0,0,0,.5);
+    display:flex; align-items:flex-end; justify-content:center;
+    z-index:70; opacity:0; pointer-events:none; transition:opacity .2s ease;
+  }
+  .intro-backdrop.open{ opacity:1; pointer-events:auto; }
+  .intro-sheet{
+    background:#fff;
+    width:100%; max-width:520px;
+    border-radius:1rem 1rem 0 0;
+    padding:1.3rem 1.3rem calc(1.6rem + env(safe-area-inset-bottom));
+    transform:translateY(100%);
+    transition:transform .25s cubic-bezier(.32,.72,0,1);
+    max-height:80vh; overflow-y:auto;
+  }
+  .intro-backdrop.open .intro-sheet{ transform:translateY(0); }
+  .intro-sheet h2{ font-size:1.15rem; margin:0 0 .7rem; }
+  .intro-sheet p{ font-size:.9rem; line-height:1.5; margin:0 0 .7rem; }
+  .intro-close-btn{
+    margin-top:.5rem; width:100%; text-align:center;
+    font-family:inherit; font-size:.9rem; font-weight:bold;
+    color:#fff; background:#000; border:none;
+    border-radius:.5rem; padding:.7rem 1rem; cursor:pointer;
+    transition:background-color .2s ease;
+  }
+  .intro-close-btn:hover{ background:#240d58; }
 </style>
 </head>
 <body>
 
+  <section id="picture">
+    <img src="/rotkehlchen.webp" alt="Tierlist" class="avatar" />
+  </section>
+
   <section id="content" class="feldbuch">
     <h1>Tierlist - Liste der Tiere in Deutschland</h1>
+
+    <div class="intro-backdrop" id="introBackdrop">
+      <div class="intro-sheet">
+        <h2>Willkommen bei Tierlist 👋</h2>
+        <p>
+          Hier kannst Du Tiere sammeln! Alle Wildtiere, die es in Deutschland gibt, sind hier aufgelistet. Du kannst ein Foto machen oder ein gemachtes Foto eintragen und so Deinen Fortschritt bei der Suche nach allen Wildtieren dokumentieren!<br><br>
+          Vorsicht! Das Ganze funktioniert nur in diesem Browser. Alles wird nur lokal bei Dir gespeichert, etwaige Updates etc. Deines Browsers könnten die Daten wieder löschen. Keine Deiner Fotos müssen hochgeladen werden oder werden auf einem Server gespeichert.
+        </p>
+        <button class="intro-close-btn" id="introClose">Los geht's</button>
+      </div>
+    </div>
+
     <p>
-      Hier kannst Du Tiere sammeln! Alle Wildtiere, die es in Deutschland gibt, sind hier aufgelistet. Du kannst ein Foto machen oder ein gemachtes Foto eintragen und so Deinen Fortschritt bei der Suche nach allen Wildtieren dokumentieren!<br><br>
-      Vorsicht! Das Ganze funktioniert nur in diesem Browser. Alles wird nur lokal bei Dir gespeichert, etwaige Updates etc. Deines Browsers könnten die Daten wieder löschen. Auf <a href="/index.html">meiner Website</a> werden keine Daten von Dir gespeichert.<br> <br>
-      Es gibt in Deutschland 387 heimische Vögel, Säugetiere, Reptilien &amp; Amphibien. Hier kannst Du alle sammeln, mal sehen, wann Du alle gefunden hast.</p>
+      Es gibt in Deutschland 387 heimische Vögel, Säugetiere, Reptilien &amp; Amphibien. Hier kannst Du alle dokumentieren. Mal sehen, wann Du alle gefunden hast.</p>
     <p class="progress-stats">
       <span style="color:#240d58;">fotografiert: <strong id="statText">0 / 387</strong></span>
       <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
@@ -237,6 +279,25 @@
   <input type="file" id="libInput" accept="image/*" />
 
   <div class="toast" id="toast"></div>
+
+  <script>
+    const introBackdrop = document.getElementById('introBackdrop');
+    const introClose = document.getElementById('introClose');
+
+    // Beim Laden einblenden
+    window.addEventListener('DOMContentLoaded', () => {
+      introBackdrop.classList.add('open');
+    });
+
+    function closeIntro() {
+      introBackdrop.classList.remove('open');
+    }
+
+    introClose.addEventListener('click', closeIntro);
+    introBackdrop.addEventListener('click', e => {
+      if (e.target === introBackdrop) closeIntro();
+    });
+  </script>
 
   <script src="species.js"></script>
   <script src="app.js"></script>
