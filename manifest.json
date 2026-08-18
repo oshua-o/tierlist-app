@@ -2,7 +2,7 @@
   "name": "Tierlist – Liste der Wildtiere in Deutschland",
   "short_name": "Tierlist",
   "description": "Fotografiere alle heimischen Wildtiere!",
-  "start_url": "./tierlist-app.html",
+  "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
