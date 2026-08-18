@@ -22,7 +22,7 @@ Du darfst jede Änderung an dieser "App" vornehmen, die Du möchtest. Wenn Du me
 
 ### Die Seite selbst
 
-Auf \url{oshua-o.github.io/tierlist-app} kommst Du auf die "App". Hier kannst Du Fotos direkt machen oder für die entsprechenden Tiere hochladen. Der Fortschritt wird Dir oben angezeigt. Du kannst auch Fotos wieder löschen und durch andere ersetzen. Als Datum wird Dir immer angezeigt, wann Du das Foto hochgeladen hast.
+Auf oshua-o.github.io/tierlist-app kommst Du auf die "App". Hier kannst Du Fotos direkt machen oder für die entsprechenden Tiere hochladen. Der Fortschritt wird Dir oben angezeigt. Du kannst auch Fotos wieder löschen und durch andere ersetzen. Als Datum wird Dir immer angezeigt, wann Du das Foto hochgeladen hast.
 
 Du speicherst alle Daten direkt in Deinem Browser-Cache. Das kann dazu führen, dass (wenn Du große Fotos hochlädst) der Cache sehr groß wird. 
 
