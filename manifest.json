@@ -1,0 +1,16 @@
+{
+  "name": "Tierlist – Liste der Wildtiere in Deutschland",
+  "short_name": "Tierlist",
+  "description": "Fotografiere alle heimischen Wildtiere!",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#faf6ee",
+  "theme_color": "#240d58",
+  "icons": [
+    { "src": "icon-192.webp", "sizes": "192x192", "type": "image/webp" },
+    { "src": "icon-512.webp", "sizes": "512x512", "type": "image/webp" },
+    { "src": "icon-512.webp", "sizes": "512x512", "type": "image/webp", "purpose": "maskable" }
+  ]
+}

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Tierlist – Liste der Wildtiere in Deutschland</title>
+<meta name="description" content="Fotografiere alle heimischen Wildtiere Deutschlands und verfolge deinen Fortschritt." />
+
+<!-- iOS Home-Screen / PWA -->
+<link rel="manifest" href="manifest.json" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Feldbuch" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<meta name="theme-color" content="#240d58" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Krub:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="/main.css" />
+
+<style>
+  /* Ergänzungen zu main.css – nur für Elemente, die main.css nicht abdeckt */
+  *{ box-sizing:border-box; }
+
+  #content.feldbuch{
+    max-width:640px;
+    text-align:left;
+  }
+
+  .progress-stats{ margin:0 0 1.2rem; font-size:.9rem; }
+  .progress-track{
+    height:8px; background:#eee; border-radius:99px; overflow:hidden; margin-top:.4rem;
+  }
+  .progress-fill{
+    height:100%; background:#240d58; border-radius:99px; transition:width .4s ease;
+  }
+
+  .search-row{ display:flex; gap:.5rem; margin:0 0 1.2rem; }
+  .search-row input{
+    flex:1; font-family:inherit; font-size:.9rem;
+    padding:.55rem .75rem; border-radius:.5rem; border:1px solid #ddd;
+  }
+  .filter-btn{
+    font-family:inherit; font-size:.8rem; font-weight:bold;
+    color:#fff; background:#000; border:none; border-radius:.5rem;
+    padding:.55rem .8rem; white-space:nowrap; cursor:pointer;
+    transition:background-color .2s ease;
+  }
+  .filter-btn:hover{ background:#240d58; }
+  .filter-btn[aria-pressed="true"]{ background:#240d58; }
+
+  /* Kachel-Grid – im Stil von tierlist.html's .animal-grid */
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:.8rem;
+  }
+  @media (max-width:550px){ .grid{ grid-template-columns:repeat(2,1fr); } }
+
+  .card{
+    position:relative;
+    aspect-ratio:1/1.1;
+    border-radius:.5rem;
+    overflow:hidden;
+    background:#fff;
+    border:1px solid #eee;
+    box-shadow:0 2px 5px rgba(0,0,0,.05);
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+  }
+  .card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 5px 15px rgba(36,13,88,.15);
+    border-color:#240d58;
+  }
+  .card:active{ transform:scale(.97); }
+
+  .card.empty{
+    flex-direction:column; gap:.3rem; padding:.5rem;
+    border-style:dashed; border-color:#ccc;
+  }
+  .card.empty .cam{ width:1.3rem; height:1.3rem; opacity:.5; }
+  .card.empty .name{
+    font-size:.72rem; font-weight:bold; line-height:1.15; text-align:center;
+  }
+  .card.empty .sci{
+    font-size:.55rem; font-style:italic; color:#888; text-align:center;
+  }
+
+  .card.filled img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .card.filled .caption{
+    position:absolute; left:0; right:0; bottom:0;
+    background:linear-gradient(0deg, rgba(0,0,0,.72), transparent);
+    color:#fff; font-size:.68rem; font-weight:bold;
+    padding:.8rem .4rem .3rem; text-align:center; line-height:1.15;
+  }
+  .stamp{
+    position:absolute; top:.3rem; right:.3rem;
+    width:1.3rem; height:1.3rem; border-radius:50%;
+    background:#240d58; color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-size:.75rem; font-weight:bold;
+    box-shadow:0 1px 4px rgba(0,0,0,.25);
+  }
+
+  .empty-msg{
+    grid-column:1/-1; text-align:center; padding:2.5rem 1rem;
+    color:#666; font-style:italic;
+  }
+
+  /* ---------- Sheets / Modals ---------- */
+  .sheet-backdrop{
+    position:fixed; inset:0; background:rgba(0,0,0,.5);
+    display:flex; align-items:flex-end; justify-content:center;
+    z-index:50; opacity:0; pointer-events:none; transition:opacity .2s ease;
+  }
+  .sheet-backdrop.open{ opacity:1; pointer-events:auto; }
+  .sheet{
+    background:#fff;
+    width:100%; max-width:520px;
+    border-radius:1rem 1rem 0 0;
+    padding:1.1rem 1.1rem calc(1.6rem + env(safe-area-inset-bottom));
+    transform:translateY(100%);
+    transition:transform .25s cubic-bezier(.32,.72,0,1);
+    max-height:88vh; overflow-y:auto;
+  }
+  .sheet-backdrop.open .sheet{ transform:translateY(0); }
+  .sheet-handle{
+    width:36px; height:4px; background:#ddd; border-radius:99px; margin:0 auto .9rem;
+  }
+  .sheet h2{ font-size:1.2rem; margin:0 0 .1rem; }
+  .sheet .sci{ font-style:italic; color:#666; font-size:.85rem; margin-bottom:1rem; }
+
+  .capture-options{ display:flex; flex-direction:column; gap:.6rem; margin-top:.5rem; }
+  .capture-btn{
+    display:flex; align-items:center; gap:.7rem;
+    font-family:inherit; font-size:.95rem; font-weight:bold;
+    background:#fff; border:1px solid #ddd;
+    border-radius:.5rem; padding:.85rem 1rem; color:#000;
+    cursor:pointer; transition:background-color .2s ease;
+  }
+  .capture-btn:hover{ background:#f7f7f7; border-color:#240d58; }
+  .cancel-btn{
+    margin-top:.9rem; width:100%; text-align:center;
+    background:none; border:none; color:#240d58;
+    font-family:inherit; font-size:.9rem; padding:.6rem; cursor:pointer;
+  }
+
+  .zoom-photo{ width:100%; aspect-ratio:1; object-fit:cover; border-radius:.6rem; }
+  .zoom-meta{ display:flex; justify-content:space-between; align-items:flex-start; margin-top:.9rem; }
+  .zoom-date{ font-size:.78rem; color:#666; margin-top:.15rem; }
+  .trash-btn{
+    border:1px solid #e3c9c9; background:#fff6f6; color:#a53a3a;
+    border-radius:.5rem; padding:.5rem .6rem; cursor:pointer;
+    display:flex; align-items:center; gap:.35rem; font-size:.78rem; font-weight:bold;
+  }
+  .trash-btn:hover{ background:#fbe6e6; }
+
+  #camInput, #libInput{ display:none; }
+
+  .toast{
+    position:fixed; left:50%; bottom:calc(1.3rem + env(safe-area-inset-bottom));
+    transform:translate(-50%, 10px);
+    background:#000; color:#fff; font-size:.82rem;
+    padding:.6rem 1rem; border-radius:99px; box-shadow:0 6px 20px rgba(0,0,0,.25);
+    opacity:0; pointer-events:none; transition:opacity .2s ease, transform .2s ease;
+    z-index:60;
+  }
+  .toast.show{ opacity:1; transform:translate(-50%,0); }
+</style>
+</head>
+<body>
+
+  <section id="content" class="feldbuch">
+    <h1>Tierlist - Liste der Tiere in Deutschland</h1>
+    <p>
+      Hier kann man selbst die eigenen gefundenen Tiere eintragen und hochladen! <br>
+      Vorsicht! Das Ganze funktioniert nur in diesem Browser. Alles wird nur lokal bei Dir gespeichert, etwaige Updates etc. Deines Browsers könnten die Daten wieder löschen. Auf <a href="/index.html">meiner Website</a> werden keine Daten von Dir gespeichert.<br> <br>
+      Es gibt in Deutschland 387 heimische Vögel, Säugetiere, Reptilien &amp; Amphibien. Hier kannst Du alle sammeln, mal sehen, wann Du alle gefunden hast.</p>
+    <p class="progress-stats">
+      <span style="color:#240d58;">fotografiert: <strong id="statText">0 / 387</strong></span>
+      <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    </p>
+
+    <div class="search-row">
+      <input id="searchInput" type="search" placeholder="Art suchen…" autocomplete="off" />
+      <button class="filter-btn" id="filterBtn" aria-pressed="false">noch nicht gefunden</button>
+    </div>
+
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <!-- Capture sheet -->
+  <div class="sheet-backdrop" id="captureBackdrop">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <h2 id="captureName"></h2>
+      <div class="sci" id="captureSci"></div>
+      <div class="capture-options">
+        <button class="capture-btn" id="btnCamera">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z" stroke="#240d58" stroke-width="1.6"/><circle cx="12" cy="13" r="3.4" stroke="#240d58" stroke-width="1.6"/></svg>
+          Foto aufnehmen
+        </button>
+        <button class="capture-btn" id="btnLibrary">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3.5" y="4.5" width="17" height="15" rx="2" stroke="#240d58" stroke-width="1.6"/><path d="M3.5 15.5 8 11l3 3 4-4.5 5.5 6" stroke="#240d58" stroke-width="1.6" stroke-linejoin="round"/><circle cx="8" cy="8.5" r="1.4" fill="#240d58"/></svg>
+          Foto hochladen
+        </button>
+      </div>
+      <button class="cancel-btn" id="cancelCapture">Stop</button>
+    </div>
+  </div>
+
+  <!-- Zoom sheet -->
+  <div class="sheet-backdrop" id="zoomBackdrop">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <img class="zoom-photo" id="zoomPhoto" alt="" />
+      <div class="zoom-meta">
+        <div>
+          <h2 id="zoomName" style="margin-bottom:.1rem;"></h2>
+          <div class="sci" id="zoomSci" style="margin-bottom:.2rem;"></div>
+          <div class="zoom-date" id="zoomDate"></div>
+        </div>
+        <button class="trash-btn" id="deleteBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m-9 0 1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13" stroke="#a53a3a" stroke-width="1.7" stroke-linecap="round"/></svg>
+          Löschen
+        </button>
+      </div>
+      <button class="cancel-btn" id="closeZoom">Schließen</button>
+    </div>
+  </div>
+
+  <input type="file" id="camInput" accept="image/*" capture="environment" />
+  <input type="file" id="libInput" accept="image/*" />
+
+  <div class="toast" id="toast"></div>
+
+  <script src="species.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
